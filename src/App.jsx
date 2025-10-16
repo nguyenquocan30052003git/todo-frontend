@@ -8,11 +8,15 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const [editingId, setEditingId] = useState(null);
+  const [editValue, setEditValue] = useState('');
+
+
   // 1️⃣ GET - Lấy danh sách todos khi component load
   useEffect(() => {
     fetchTodos();
-  }, []);
-
+  }, []);  
+ 
   const fetchTodos = async () => {
     try {
       setLoading(true);
@@ -119,6 +123,64 @@ export default function App() {
     }
   };
 
+  // 5️⃣ EDIT - Bước vào edit mode
+  const handleStartEdit = (id, currentTitle) => {
+    setEditingId(id);
+    setEditValue(currentTitle);
+    setError('');
+  };
+
+  // 6️⃣ EDIT - Hủy edit
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditValue('');
+  };
+
+  // 7️⃣ EDIT - Lưu title mới
+  const handleSaveEdit = async (id) => {
+    if (!editValue.trim()) {
+      setError('Title không được để trống!');
+      return;
+    }
+
+    try {
+      setError('');
+      const todo = todos.find(t => t.id === id);
+      
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: editValue.trim(),
+          completed: todo.completed
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setTodos(todos.map(t => t.id === id ? data.data : t));
+        setEditingId(null);
+        setEditValue('');
+      } else {
+        setError('Lỗi: Không thể cập nhật title');
+      }
+    } catch (err) {
+      setError('Lỗi kết nối: ' + err.message);
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+  
   return (
     <div style={styles.container}>
       <div style={styles.card}>
@@ -157,21 +219,75 @@ export default function App() {
                     onChange={() => handleToggleTodo(todo.id, todo.completed)}
                     style={styles.checkbox}
                   />
-                  <span style={{
-                    ...styles.todoTitle,
-                    textDecoration: todo.completed ? 'line-through' : 'none',
-                    color: todo.completed ? '#999' : '#333',
-                    opacity: todo.completed ? 0.6 : 1
-                  }}>
-                    {todo.title}
-                  </span>
+                  
+                  {/* Nếu đang edit → hiển thị input */}
+                  {editingId === todo.id ? (
+                    <input
+                      type="text"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      style={{
+                        ...styles.input,
+                        flex: 1,
+                        marginRight: '10px'
+                      }}
+                      autoFocus
+                    />
+                  ) : (
+                    /* Nếu không edit → hiển thị text */
+                    <span style={{
+                      ...styles.todoTitle,
+                      textDecoration: todo.completed ? 'line-through' : 'none',
+                      color: todo.completed ? '#999' : '#333',
+                      opacity: todo.completed ? 0.6 : 1
+                    }}>
+                      {todo.title}
+                    </span>
+                  )}
                 </div>
-                <button
-                  onClick={() => handleDeleteTodo(todo.id)}
-                  style={styles.deleteBtn}
-                >
-                  Xóa
-                </button>
+                
+                {/* Buttons */}
+                <div style={styles.buttonGroup}>
+                  {editingId === todo.id ? (
+                    <>
+                      {/* Khi đang edit: Lưu & Hủy */}
+                      <button
+                        onClick={() => handleSaveEdit(todo.id)}
+                        style={{
+                          ...styles.saveBtn,
+                          marginRight: '5px'
+                        }}
+                      >
+                        Lưu
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        style={styles.cancelBtn}
+                      >
+                        Hủy
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {/* Khi không edit: Sửa & Xóa */}
+                      <button
+                        onClick={() => handleStartEdit(todo.id, todo.title)}
+                        style={{
+                          ...styles.editBtn,
+                          marginRight: '5px'
+                        }}
+                      >
+                        Sửa
+                      </button>
+                      <button
+                        onClick={() => handleDeleteTodo(todo.id)}
+                        style={styles.deleteBtn}
+                      >
+                        Xóa
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             ))
           )}
@@ -304,5 +420,47 @@ const styles = {
     borderRadius: '4px',
     color: '#666',
     fontSize: '13px'
+  },
+  buttonGroup: {
+  display: 'flex',
+  gap: '5px',
+  flexShrink: 0
+  },
+  editBtn: {
+    padding: '6px 12px',
+    backgroundColor: '#2196F3',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '12px',
+    transition: 'background-color 0.3s'
+  },
+  saveBtn: {
+    padding: '6px 12px',
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '12px',
+    transition: 'background-color 0.3s'
+  },
+  cancelBtn: {
+    padding: '6px 12px',
+    backgroundColor: '#9E9E9E',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '12px',
+    transition: 'background-color 0.3s'
   }
+
+  
+
+
+
+
+
 };
