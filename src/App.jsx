@@ -7,16 +7,14 @@ export default function App() {
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState('');
-
 
   // 1️⃣ GET - Lấy danh sách todos khi component load
   useEffect(() => {
     fetchTodos();
-  }, []);  
- 
+  }, []);
+
   const fetchTodos = async () => {
     try {
       setLoading(true);
@@ -89,10 +87,6 @@ export default function App() {
       
       if (data.success) {
         setTodos(todos.map(t => t.id === id ? data.data : t));
-        //todos.map la 1 mang moi,(se duyet qua cac phan tu trong mang, t la ten bien cua cac phan tu)
-        //(điều_kiện) ? (nếu_đúng) : (nếu_sai)
-        //(t=>t.id===id) ? (data.data) : (t(giu nguyen))
-        //data.success
       } else {
         setError('Lỗi: Không thể cập nhật todo');
       }
@@ -170,297 +164,164 @@ export default function App() {
     }
   };
 
-
-
-
-
-
-
-
-
-
-
-  
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h1 style={styles.title}>📝 Todo App</h1>
-        
-        {/* Form thêm todo */}
-        <div style={styles.form}>
-          <input
-            type="text"
-            placeholder="Nhập công việc cần làm..."
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            style={styles.input}
-            onKeyPress={(e) => e.key === 'Enter' && handleAddTodo(e)}
-          />
-          <button onClick={handleAddTodo} style={styles.button}>Thêm</button>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-5xl font-bold text-gray-800 mb-2">📝 Todo App</h1>
+          <p className="text-gray-600">Quản lý công việc của bạn một cách hiệu quả</p>
         </div>
 
-        {/* Error message */}
-        {error && <div style={styles.error}>{error}</div>}
+        {/* Card chính */}
+        <div className="bg-white rounded-lg shadow-xl p-6">
+          
+          {/* Form thêm todo */}
+          <div className="flex gap-2 mb-6">
+            <input
+              type="text"
+              placeholder="Nhập công việc cần làm..."
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleAddTodo(e)}
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition"
+            />
+            <button
+              onClick={handleAddTodo}
+              className="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-green-600 transition shadow-md"
+            >
+              Thêm
+            </button>
+          </div>
 
-        {/* Loading state */}
-        {loading && <div style={styles.loading}>Đang tải...</div>}
+          {/* Error message */}
+          {error && (
+            <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex items-center gap-2">
+              <span className="text-xl">⚠️</span>
+              {error}
+            </div>
+          )}
 
-        {/* Danh sách todos */}
-        <div style={styles.todoList}>
-          {todos.length === 0 ? (
-            <p style={styles.empty}>Chưa có todo nào. Hãy thêm một cái! 🚀</p>
-          ) : (
-            todos.map(todo => (
-              <div key={todo.id} style={styles.todoItem}>
-                <div style={styles.todoContent}>
+          {/* Loading state */}
+          {loading && (
+            <div className="text-center py-8">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <p className="text-gray-600 mt-3">Đang tải...</p>
+            </div>
+          )}
+
+          {/* Danh sách todos */}
+          <div className="space-y-2 mb-6 max-h-96 overflow-y-auto">
+            {todos.length === 0 ? (
+              <p className="text-center text-gray-400 py-12">
+                🚀 Chưa có todo nào. Hãy thêm một cái!
+              </p>
+            ) : (
+              todos.map(todo => (
+                <div
+                  key={todo.id}
+                  className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition"
+                >
+                  {/* Checkbox */}
                   <input
                     type="checkbox"
                     checked={todo.completed}
                     onChange={() => handleToggleTodo(todo.id, todo.completed)}
-                    style={styles.checkbox}
+                    className="w-5 h-5 cursor-pointer accent-primary flex-shrink-0"
                   />
-                  
-                  {/* Nếu đang edit → hiển thị input */}
-                  {editingId === todo.id ? (
-                    <input
-                      type="text"
-                      value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
-                      style={{
-                        ...styles.input,
-                        flex: 1,
-                        marginRight: '10px'
-                      }}
-                      autoFocus
-                    />
-                  ) : (
-                    /* Nếu không edit → hiển thị text */
-                    <span style={{
-                      ...styles.todoTitle,
-                      textDecoration: todo.completed ? 'line-through' : 'none',
-                      color: todo.completed ? '#999' : '#333',
-                      opacity: todo.completed ? 0.6 : 1
-                    }}>
-                      {todo.title}
-                    </span>
-                  )}
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    {editingId === todo.id ? (
+                      /* Edit mode */
+                      <input
+                        type="text"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                        autoFocus
+                      />
+                    ) : (
+                      /* View mode */
+                      <span
+                        className={`block break-words ${
+                          todo.completed
+                            ? 'line-through text-gray-400'
+                            : 'text-gray-800'
+                        }`}
+                      >
+                        {todo.title}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Buttons */}
+                  <div className="flex gap-2 flex-shrink-0">
+                    {editingId === todo.id ? (
+                      <>
+                        {/* Save & Cancel */}
+                        <button
+                          onClick={() => handleSaveEdit(todo.id)}
+                          className="px-3 py-2 bg-primary text-white rounded font-semibold text-sm hover:bg-green-600 transition"
+                        >
+                          Lưu
+                        </button>
+                        <button
+                          onClick={handleCancelEdit}
+                          className="px-3 py-2 bg-gray-400 text-white rounded font-semibold text-sm hover:bg-gray-500 transition"
+                        >
+                          Hủy
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        {/* Edit & Delete */}
+                        <button
+                          onClick={() => handleStartEdit(todo.id, todo.title)}
+                          className="px-3 py-2 bg-info text-white rounded font-semibold text-sm hover:bg-blue-600 transition"
+                        >
+                          Sửa
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTodo(todo.id)}
+                          className="px-3 py-2 bg-danger text-white rounded font-semibold text-sm hover:bg-red-600 transition"
+                        >
+                          Xóa
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
-                
-                {/* Buttons */}
-                <div style={styles.buttonGroup}>
-                  {editingId === todo.id ? (
-                    <>
-                      {/* Khi đang edit: Lưu & Hủy */}
-                      <button
-                        onClick={() => handleSaveEdit(todo.id)}
-                        style={{
-                          ...styles.saveBtn,
-                          marginRight: '5px'
-                        }}
-                      >
-                        Lưu
-                      </button>
-                      <button
-                        onClick={handleCancelEdit}
-                        style={styles.cancelBtn}
-                      >
-                        Hủy
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      {/* Khi không edit: Sửa & Xóa */}
-                      <button
-                        onClick={() => handleStartEdit(todo.id, todo.title)}
-                        style={{
-                          ...styles.editBtn,
-                          marginRight: '5px'
-                        }}
-                      >
-                        Sửa
-                      </button>
-                      <button
-                        onClick={() => handleDeleteTodo(todo.id)}
-                        style={styles.deleteBtn}
-                      >
-                        Xóa
-                      </button>
-                    </>
-                  )}
+              ))
+            )}
+          </div>
+
+          {/* Stats */}
+          {todos.length > 0 && (
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <p className="text-2xl font-bold text-primary">{todos.length}</p>
+                  <p className="text-sm text-gray-600">Tổng</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-green-600">{todos.filter(t => t.completed).length}</p>
+                  <p className="text-sm text-gray-600">Hoàn thành</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-orange-600">{todos.filter(t => !t.completed).length}</p>
+                  <p className="text-sm text-gray-600">Còn lại</p>
                 </div>
               </div>
-            ))
+            </div>
           )}
         </div>
 
-        {/* Stats */}
-        {todos.length > 0 && (
-          <div style={styles.stats}>
-            <p>Tổng: {todos.length} | Hoàn thành: {todos.filter(t => t.completed).length}</p>
-          </div>
-        )}
+        {/* Footer */}
+        <div className="text-center mt-8 text-gray-600 text-sm">
+          <p>💪 Keep learning, keep building!</p>
+        </div>
       </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '100vh',
-    backgroundColor: '#f5f5f5',
-    fontFamily: 'Arial, sans-serif',
-    padding: '20px'
-  },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: '8px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-    padding: '30px',
-    width: '100%',
-    maxWidth: '500px'
-  },
-  title: {
-    textAlign: 'center',
-    color: '#333',
-    marginBottom: '20px',
-    fontSize: '28px'
-  },
-  form: {
-    display: 'flex',
-    gap: '10px',
-    marginBottom: '20px'
-  },
-  input: {
-    flex: 1,
-    padding: '10px 15px',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '14px',
-    outline: 'none',
-    transition: 'border-color 0.3s'
-  },
-  button: {
-    padding: '10px 20px',
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '14px',
-    fontWeight: 'bold',
-    transition: 'background-color 0.3s'
-  },
-  error: {
-    padding: '12px',
-    backgroundColor: '#ffebee',
-    color: '#c62828',
-    borderRadius: '4px',
-    marginBottom: '15px',
-    fontSize: '14px'
-  },
-  loading: {
-    textAlign: 'center',
-    padding: '20px',
-    color: '#666',
-    fontSize: '14px'
-  },
-  todoList: {
-    marginBottom: '20px',
-    maxHeight: '400px',
-    overflowY: 'auto'
-  },
-  empty: {
-    textAlign: 'center',
-    color: '#999',
-    padding: '30px 0',
-    fontSize: '14px'
-  },
-  todoItem: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '12px',
-    backgroundColor: '#f9f9f9',
-    borderRadius: '4px',
-    marginBottom: '10px',
-    border: '1px solid #eee'
-  },
-  todoContent: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    flex: 1
-  },
-  checkbox: {
-    width: '18px',
-    height: '18px',
-    cursor: 'pointer'
-  },
-  todoTitle: {
-    fontSize: '15px',
-    flex: 1
-  },
-  deleteBtn: {
-    padding: '6px 12px',
-    backgroundColor: '#f44336',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '12px',
-    transition: 'background-color 0.3s'
-  },
-  stats: {
-    textAlign: 'center',
-    padding: '15px',
-    backgroundColor: '#f0f0f0',
-    borderRadius: '4px',
-    color: '#666',
-    fontSize: '13px'
-  },
-  buttonGroup: {
-  display: 'flex',
-  gap: '5px',
-  flexShrink: 0
-  },
-  editBtn: {
-    padding: '6px 12px',
-    backgroundColor: '#2196F3',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '12px',
-    transition: 'background-color 0.3s'
-  },
-  saveBtn: {
-    padding: '6px 12px',
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '12px',
-    transition: 'background-color 0.3s'
-  },
-  cancelBtn: {
-    padding: '6px 12px',
-    backgroundColor: '#9E9E9E',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '12px',
-    transition: 'background-color 0.3s'
-  }
-
-  
-
-
-
-
-
-};
