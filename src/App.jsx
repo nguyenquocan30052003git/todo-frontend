@@ -191,7 +191,7 @@ export default function App() {
           <div className="mb-6">
             <input
               type="text"
-              placeholder="🔍 Tìm kiếm todo..."
+              placeholder="Tìm kiếm todo... 🔍 "
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info transition"
