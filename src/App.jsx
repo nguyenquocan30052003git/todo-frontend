@@ -9,6 +9,7 @@ export default function App() {
   const [error, setError] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState('');
+  const [searchText, setSearchText] = useState('');
 
   // 1️⃣ GET - Lấy danh sách todos khi component load
   useEffect(() => {
@@ -164,6 +165,16 @@ export default function App() {
     }
   };
 
+  // 8️⃣ SEARCH - Lọc todos theo text
+  const getFilteredTodos = () => {
+    if (!searchText.trim()) {
+      return todos;
+    }
+    return todos.filter(todo =>
+      todo.title.toLowerCase().includes(searchText.toLowerCase())
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
       <div className="max-w-2xl mx-auto">
@@ -176,6 +187,22 @@ export default function App() {
         {/* Card chính */}
         <div className="bg-white rounded-lg shadow-xl p-6">
           
+          {/* Search Input */}
+          <div className="mb-6">
+            <input
+              type="text"
+              placeholder="🔍 Tìm kiếm todo..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info transition"
+            />
+            {searchText && (
+              <p className="text-sm text-gray-600 mt-2">
+                Tìm thấy: <span className="font-bold text-primary">{getFilteredTodos().length}</span> kết quả
+              </p>
+            )}
+          </div>
+
           {/* Form thêm todo */}
           <div className="flex gap-2 mb-6">
             <input
@@ -212,12 +239,12 @@ export default function App() {
 
           {/* Danh sách todos */}
           <div className="space-y-2 mb-6 max-h-96 overflow-y-auto">
-            {todos.length === 0 ? (
+            {getFilteredTodos().length === 0 ? (
               <p className="text-center text-gray-400 py-12">
-                🚀 Chưa có todo nào. Hãy thêm một cái!
+                {searchText ? '🔍 Không tìm thấy kết quả' : '🚀 Chưa có todo nào. Hãy thêm một cái!'}
               </p>
             ) : (
-              todos.map(todo => (
+              getFilteredTodos().map(todo => (
                 <div
                   key={todo.id}
                   className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition"
@@ -297,19 +324,19 @@ export default function App() {
           </div>
 
           {/* Stats */}
-          {todos.length > 0 && (
+          {getFilteredTodos().length > 0 && (
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
-                  <p className="text-2xl font-bold text-primary">{todos.length}</p>
+                  <p className="text-2xl font-bold text-primary">{getFilteredTodos().length}</p>
                   <p className="text-sm text-gray-600">Tổng</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-green-600">{todos.filter(t => t.completed).length}</p>
+                  <p className="text-2xl font-bold text-green-600">{getFilteredTodos().filter(t => t.completed).length}</p>
                   <p className="text-sm text-gray-600">Hoàn thành</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-orange-600">{todos.filter(t => !t.completed).length}</p>
+                  <p className="text-2xl font-bold text-orange-600">{getFilteredTodos().filter(t => !t.completed).length}</p>
                   <p className="text-sm text-gray-600">Còn lại</p>
                 </div>
               </div>
