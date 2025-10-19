@@ -317,7 +317,7 @@ export default function App() {
                 
                 
                 {categories.map(cat => (
-                  <div key={cat.id} className="flex gap-2 flex-shrink-0  min-w-0">
+                  <div key={cat.id} className="flex gap-2 flex-shrink-0 ">
                     <>
                   <button
                     key={cat.id}
@@ -332,7 +332,7 @@ export default function App() {
                       className="w-4 h-4 rounded-full"
                       style={{ backgroundColor: cat.color }}
                     ></div>
-                    < div className="break-words" >{cat.name} </div> 
+                  {cat.name} 
                     
                   </button>
                   <button
