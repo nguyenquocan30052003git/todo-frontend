@@ -68,6 +68,9 @@ export default function App() {
       return;
     }
 
+    addCategory();
+  };
+  const addCategory = async () => {
     try {
       setError('');
       const response = await fetch(CATEGORIES_URL, {
@@ -91,7 +94,35 @@ export default function App() {
     } catch (err) {
       setError('Lỗi kết nối: ' + err.message);
     }
+  }
+
+  // 4.1 DELETE - Xóa categories
+  const handleDeleteCategory = async (id) => {
+    if (!window.confirm('Bạn chắc chắn muốn xóa?')) return;
+    
+    try {
+      setError('');
+      const response = await fetch(`${CATEGORIES_URL}/${id}`, {
+        method: 'DELETE'
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        setCategories(categories.filter(t => t.id !== id));
+      } else {
+        setError('Lỗi: Không thể xóa category 2');
+      }
+    } catch (err) {
+      setError('Lỗi kết nối: ' + err.message);
+    }
   };
+
+
+
+
+
+
+
 
   // 5️⃣ POST - Thêm todo mới
   const handleAddTodo = (e) => {
@@ -264,11 +295,11 @@ export default function App() {
         </div>
 
         {/* Main container */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-7 gap-6">
           
           {/* Sidebar - Categories */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-lg p-5 sticky top-8">
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-lg shadow-lg p-1 sticky top-8">
               <h2 className="text-xl font-bold text-gray-800 mb-4">📂 Categories</h2>
               
               {/* Category list */}
@@ -284,7 +315,10 @@ export default function App() {
                   All Todos
                 </button>
                 
+                
                 {categories.map(cat => (
+                  <div key={cat.id} className="flex gap-2 flex-shrink-0  min-w-0">
+                    <>
                   <button
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id.toString())}
@@ -298,9 +332,20 @@ export default function App() {
                       className="w-4 h-4 rounded-full"
                       style={{ backgroundColor: cat.color }}
                     ></div>
-                    {cat.name}
+                    < div className="break-words" >{cat.name} </div> 
+                    
                   </button>
+                  <button
+                    onClick={() => handleDeleteCategory(cat.id)}
+                    className="px-3 py-2 bg-danger text-white rounded font-semibold text-sm hover:bg-red-600 transition"
+                    >
+                    Delete
+                    </button>
+                    </> 
+                  </div>
+                  
                 ))}
+                
               </div>
 
               {/* Add category button */}
@@ -347,7 +392,7 @@ export default function App() {
           </div>
 
           {/* Main content - Todos */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-5">
             <div className="bg-white rounded-lg shadow-xl p-6">
               
               {/* Search Input */}
@@ -437,7 +482,9 @@ export default function App() {
                           style={{ backgroundColor: getCategoryColor(todo.category_id) }}
                         >
                           {getCategoryName(todo.category_id)}
+                          
                         </div>
+                        
                       )}
 
                       {/* Content */}
