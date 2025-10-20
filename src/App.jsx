@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-// src/App.jsx - Thêm vào phần import
-import { initVisitorTracking, getVisitorStats } from './utils/visitorTracker';
+
+// src/App.jsx
+import { trackVisitor, initVisitorTracking, getVisitorStats, getAllVisitors } from './utils/visitorTracker';
+
 
 const API_URL = 'https://todo-api-ovrr.onrender.com/api/todos';
 const CATEGORIES_URL = 'https://todo-api-ovrr.onrender.com/api/categories';
