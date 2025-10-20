@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+// src/App.jsx - Thêm vào phần import
+import { initVisitorTracking, getVisitorStats } from './utils/visitorTracker';
 
 const API_URL = 'https://todo-api-ovrr.onrender.com/api/todos';
 const CATEGORIES_URL = 'https://todo-api-ovrr.onrender.com/api/categories';
@@ -26,6 +28,8 @@ export default function App() {
   useEffect(() => {
     fetchCategories();
     fetchTodos();
+    // 🎯 Track visitor ngay khi app load
+    initVisitorTracking();
   }, []);
 
   // 2️⃣ GET - Lấy categories
