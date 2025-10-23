@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react';
 
-// src/App.jsx
-import { trackVisitor, initVisitorTracking, getVisitorStats, getAllVisitors } from './utils/visitorTracker';
-
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5173/api';
 const TODOS_URL = `${API_BASE_URL}/todos`;
 const CATEGORIES_URL = `${API_BASE_URL}/categories`;
@@ -30,8 +27,6 @@ export default function App() {
   useEffect(() => {
     fetchCategories();
     fetchTodos();
-    // 🎯 Track visitor ngay khi app load
-    //initVisitorTracking();
   }, []);
 
   // 2️⃣ GET - Lấy categories
