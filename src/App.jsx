@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { trackVisitor, initVisitorTracking, getVisitorStats, getAllVisitors } from './utils/visitorTracker';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5173/api';
-const API_URL = `${API_BASE_URL}/todos`;
+const TODOS_URL = `${API_BASE_URL}/todos`;
 const CATEGORIES_URL = `${API_BASE_URL}/categories`;
 
 export default function App() {
@@ -51,7 +51,7 @@ export default function App() {
   const fetchTodos = async () => {
     try {
       setLoading(true);
-      const response = await fetch(API_URL);
+      const response = await fetch(TODOS_URL);
       const data = await response.json();
       if (data.success) {
         setTodos(data.data);
@@ -145,7 +145,7 @@ export default function App() {
   const addTodo = async () => {
     try {
       setError('');
-      const response = await fetch(API_URL, {
+      const response = await fetch(TODOS_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -173,7 +173,7 @@ export default function App() {
       setError('');
       const todo = todos.find(t => t.id === id);
       
-      const response = await fetch(`${API_URL}/${id}`, {
+      const response = await fetch(`${TODOS_URL}/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -200,7 +200,7 @@ export default function App() {
     
     try {
       setError('');
-      const response = await fetch(`${API_URL}/${id}`, {
+      const response = await fetch(`${TODOS_URL}/${id}`, {
         method: 'DELETE'
       });
       
@@ -239,7 +239,7 @@ export default function App() {
       setError('');
       const todo = todos.find(t => t.id === id);
       
-      const response = await fetch(`${API_URL}/${id}`, {
+      const response = await fetch(`${TODOS_URL}/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
