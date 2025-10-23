@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react';
 // src/App.jsx
 import { trackVisitor, initVisitorTracking, getVisitorStats, getAllVisitors } from './utils/visitorTracker';
 
-
-const API_URL = 'https://todo-api-ovrr.onrender.com/api/todos';
-const CATEGORIES_URL = 'https://todo-api-ovrr.onrender.com/api/categories';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5173/api';
+const API_URL = `${API_BASE_URL}/todos`;
+const CATEGORIES_URL = `${API_BASE_URL}/categories`;
 
 export default function App() {
   // Todos state
@@ -31,7 +31,7 @@ export default function App() {
     fetchCategories();
     fetchTodos();
     // 🎯 Track visitor ngay khi app load
-    initVisitorTracking();
+    //initVisitorTracking();
   }, []);
 
   // 2️⃣ GET - Lấy categories
